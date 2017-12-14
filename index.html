@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grouping Engine</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+</head>
+<body>
+  <br />
+  <div class="ui text container">
+
+    <div class="ui form">
+      <div class="field">
+        <textarea id="members-list" rows="10"></textarea>
+      </div>
+      <div class="field">
+        <div class="ui action input">
+          <input placeholder="4" type="text" id="number-of-teams">
+          <button class="ui basic green button" id="split-button">Split</button>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div id="team-list">
+
+    </div>
+    <br />
+  </div>
+
+  <script>
+    let whole_team = document.getElementById('members-list').value.split('\n');
+    let split_button = document.getElementById("split-button");
+    let team_list = document.getElementById("team-list");
+
+    let num_of_members_in_team = Math.ceil(whole_team.length / 4);
+    
+    function randomize(len) {
+      return Math.floor(Math.random() * len) + 1;
+    }
+
+    function makeTables(num_of_members_in_team){
+      let tables = "";
+      for(let i=1; i<=num_of_members_in_team; i++){
+        tables += `<h2 class="ui header">Team ${ i }</h2><table class="ui table" id="team-${ i }"></table>`;
+      }
+      team_list.innerHTML = tables;
+    }
+
+
+    function makeTeams(){
+      let randu;
+      let cubeg = [];
+
+      for(let i=0; i <= whole_team.length; i++){
+        randu = randomize(whole_team.length);
+        cubeg.push(whole_team[randu]);
+      }
+
+      let team = [];
+
+      team[0] = cubeg.splice(0, num_of_members_in_team);
+      team[1] = cubeg.splice(0, num_of_members_in_team);
+      team[2] = cubeg.splice(0, num_of_members_in_team);
+      team[3] = cubeg.splice(0, num_of_members_in_team);
+
+      let team_table_data = '';  
+      team.forEach(function(indteam, ind){
+        let members_data = '';
+        indteam.forEach(function(member){
+          if (member != undefined)
+            members_data += `<tr><td>${member}</td></tr>`;
+        });
+
+        team_table_data += `<table class="ui red table">
+        <thead>
+        <tr>
+        <th>Team ${ ind + 1 }</th>
+        </tr>
+        </thead>
+        ${members_data}
+        </table>`;
+        document.getElementById('team-list').innerHTML = team_table_data;
+      });
+    }
+
+    split_button.addEventListener("click", function(){
+      makeTables(document.getElementById("number-of-teams").value);
+      makeTeams();
+    });
+
+  </script>
+</body>
+</html>
